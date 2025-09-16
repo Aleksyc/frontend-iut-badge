@@ -93,11 +93,15 @@ import { fr } from 'date-fns/locale'
 import {
   CreditCardIcon,
   ChartBarIcon,
+  UsersIcon,
+  ClockIcon
 } from '@heroicons/vue/24/outline'
 
 
 const navigation = [
-  { name: 'Tableau de bord', href: '/', icon: ChartBarIcon }
+  { name: 'Tableau de bord', href: '/', icon: ChartBarIcon },
+  { name: 'Étudiants', href: '/etudiants', icon: UsersIcon },
+  { name: 'Historique', href: '/historique', icon: ClockIcon },
 ]
 
 function formatCurrentDate(): string {
