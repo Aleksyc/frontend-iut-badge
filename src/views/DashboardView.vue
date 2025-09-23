@@ -13,16 +13,16 @@
     <!-- Statistiques du jour -->
     <div v-if="!isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <DashboardCard title="Étudiants actifs aujourd'hui" :value=0
-        :subtitle="`sur ${count} étudiants`" :icon="UsersIcon" icon-class="text-blue-600"
+        :subtitle="`sur ${countEtudiants} étudiants`" :icon="UsersIcon" icon-class="text-blue-600"
         icon-bg-class="bg-blue-100" />
 
-      <DashboardCard title="Badges aujourd'hui" :value=0 subtitle="Entrées et sorties" :icon="CreditCardIcon"
+      <DashboardCard title="Badges aujourd'hui" :value=countDay subtitle="Entrées et sorties" :icon="CreditCardIcon"
         icon-class="text-green-600" icon-bg-class="bg-green-100" />
 
-      <DashboardCard title="Badges cette semaine" :value=0 subtitle="7 derniers jours" :icon="CalendarDaysIcon"
+      <DashboardCard title="Badges cette semaine" :value=countWeek subtitle="7 derniers jours" :icon="CalendarDaysIcon"
         icon-class="text-orange-600" icon-bg-class="bg-orange-100" />
 
-      <DashboardCard title="Total étudiants" :value=count subtitle="En stage télétravail" :icon="AcademicCapIcon"
+      <DashboardCard title="Total étudiants" :value=countEtudiants subtitle="En stage télétravail" :icon="AcademicCapIcon"
         icon-class="text-purple-600" icon-bg-class="bg-purple-100" />
     </div>
 
@@ -43,17 +43,19 @@ import { ref, onMounted } from 'vue'
 import api from '../services/api.service'
 
 const isLoading = ref(true)
-const count = ref(0)
+const countEtudiants = ref(0); const countDay = ref(0); const countWeek = ref(0)
 
 onMounted(() => {
   loadData()
 })
 
 async function loadData() {
-  const [countRes] = await Promise.all([
-    api.getCountEtudiantsDB()
+  const [countRes, countDayRes] = await Promise.all([
+    api.getCountEtudiantsDB(),
+    api.getCountDayDB(),
   ])
-  count.value = (countRes.data as { [key: string]: any })["count-etudiants"]
+  countEtudiants.value = (countRes.data as { [key: string]: any })["count-etudiants"]
+  countDay.value = (countDayRes.data as { [key: string]: any })["count-day"]
   isLoading.value = false
 }
 

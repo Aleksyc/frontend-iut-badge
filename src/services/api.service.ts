@@ -11,6 +11,14 @@ class ApiService {
     return axios.get(`${this.baseUrl}/db/count-etudiants`)
   }
 
+  getCountDayDB(){
+    return axios.get(`${this.baseUrl}/db/count-day`)
+  }
+
+  getCountWeekDB(){
+    return axios.get(`${this.baseUrl}/db/count-week`)
+  }
+
 }
 
 const api = new ApiService()
