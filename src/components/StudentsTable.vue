@@ -1,9 +1,17 @@
 <template>
   <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-    <div class="px-6 py-4 border-b border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-900">Liste des étudiants</h3>
+    <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900">Liste des étudiants</h3>
+        <div class="text-sm text-gray-500">Total : {{ records.length }} étudiants</div>
+      </div>
+      <button
+        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded shadow flex items-center gap-2 text-base"
+        @click="onAddStudent">
+        <span>Ajouter</span>
+        <PlusIcon class="w-5 h-5" />
+      </button>
     </div>
-    
     <div class="overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
@@ -29,11 +37,7 @@
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <tr 
-            v-for="record in records" 
-            :key="record.id_etu"
-            class="hover:bg-gray-50 transition-colors"
-          >
+          <tr v-for="record in paginatedRecords" :key="record.id_etu" class="hover:bg-gray-50 transition-colors">
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
                 <div>
@@ -67,10 +71,12 @@
       </table>
     </div>
   </div>
+    <div class="text-center">
+      <v-pagination :length="totalPages" v-model="currentPage" size="small" @input="onPageChange"></v-pagination>
+    </div>
 </template>
 
 <script setup lang="ts">
-
 export interface Student {
   id_etu: number
   nom_etu: string
@@ -81,7 +87,8 @@ export interface Student {
   id_carte_etu: string
 }
 
-import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import { PencilIcon, TrashIcon, PlusIcon } from '@heroicons/vue/24/outline'
+import { ref, computed } from 'vue'
 
 interface Props {
   records: Array<Student>
@@ -90,11 +97,32 @@ interface Props {
 const props = defineProps<Props>()
 const records = props.records
 
+const currentPage = ref(1)
+const pageSize = 10
+
+const totalPages = computed(() => Math.ceil(records.length / pageSize))
+
+const paginatedRecords = computed(() => {
+  const start = (currentPage.value - 1) * pageSize
+  return records.slice(start, start + pageSize)
+})
+
+function onPageChange(page: number) {
+  currentPage.value = page
+}
+
 function onEdit(student: Student) {
   console.log('Modifier', student)
+  console.log(student.id_etu)
 }
 
 function onDelete(student: Student) {
   console.log('Supprimer', student)
+  console.log(student.id_etu)
+}
+
+function onAddStudent() {
+  // Action à définir (ouvrir un dialogue, etc.)
+  console.log('Ajouter un étudiant')
 }
 </script>

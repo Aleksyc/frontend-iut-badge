@@ -7,6 +7,10 @@ class ApiService {
     return axios.get(`${this.baseUrl}/db/etudiants`)
   }
 
+  deleteEtudiantDB(id_etu: number){
+    return axios.delete(`${this.baseUrl}/db/etudiants/${id_etu}`)
+  }
+
   getCountEtudiantsDB(){
     return axios.get(`${this.baseUrl}/db/count-etudiants`)
   }
