@@ -74,9 +74,19 @@
     <div class="text-center">
       <v-pagination :length="totalPages" v-model="currentPage" size="small" @input="onPageChange"></v-pagination>
     </div>
+
+    <!-- Dialog de confirmation de suppression -->
+    <DeleteStudentDialog :showDeleteDialog="showDeleteDialog" :studentToDelete="studentToDelete" :cancelDelete="cancelDelete" :confirmDelete="confirmDelete"/>
+
 </template>
 
 <script setup lang="ts">
+
+import { PencilIcon, TrashIcon, PlusIcon } from '@heroicons/vue/24/outline'
+import DeleteStudentDialog from './DeleteStudentDialog.vue'
+import api from '../services/api.service'
+import { ref, computed } from 'vue'
+
 export interface Student {
   id_etu: number
   nom_etu: string
@@ -87,15 +97,14 @@ export interface Student {
   id_carte_etu: string
 }
 
-import { PencilIcon, TrashIcon, PlusIcon } from '@heroicons/vue/24/outline'
-import { ref, computed } from 'vue'
-
 interface Props {
   records: Array<Student>
 }
 
 const props = defineProps<Props>()
 const records = props.records
+
+// =================== Pagination ===================
 
 const currentPage = ref(1)
 const pageSize = 10
@@ -111,15 +120,37 @@ function onPageChange(page: number) {
   currentPage.value = page
 }
 
+// =================== Modification ===================
+
 function onEdit(student: Student) {
   console.log('Modifier', student)
   console.log(student.id_etu)
 }
 
+// =================== Suppression ===================
+
+const showDeleteDialog = ref(false)
+const studentToDelete = ref<Student | null>(null)
+
 function onDelete(student: Student) {
-  console.log('Supprimer', student)
-  console.log(student.id_etu)
+  studentToDelete.value = student
+  showDeleteDialog.value = true
 }
+
+function confirmDelete() {
+  if (studentToDelete.value) {
+    api.deleteEtudiantDB(studentToDelete.value.id_etu)
+    showDeleteDialog.value = false
+    studentToDelete.value = null
+  }
+}
+
+function cancelDelete() {
+  showDeleteDialog.value = false
+  studentToDelete.value = null
+}
+
+// =================== Ajout ===================
 
 function onAddStudent() {
   // Action à définir (ouvrir un dialogue, etc.)
