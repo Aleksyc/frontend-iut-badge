@@ -15,6 +15,10 @@ class ApiService {
     return axios.get(`${this.baseUrl}/db/count-etudiants`)
   }
 
+  getEtudiantsPresencesDB(){
+    return axios.get(`${this.baseUrl}/db/etudiants-presences`)
+  }
+
   getCountDayDB(){
     return axios.get(`${this.baseUrl}/db/count-day`)
   }
