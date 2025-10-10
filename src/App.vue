@@ -13,18 +13,27 @@
 
             <!-- Navigation links -->
             <div class="hidden md:flex items-center space-x-4">
-              <router-link
-                v-for="item in navigation"
-                :key="item.name"
-                :to="item.href"
-                class="flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                :class="[
+              <router-link v-for="item in navigation" :key="item.name" :to="item.href"
+                class="flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors" :class="[
                   $route.path === item.href
                     ? 'bg-blue-100 text-blue-700'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                ]"
-              >
+                ]">
                 <component :is="item.icon" class="h-5 w-5 mr-2" />
+
+                {{ item.name }}
+              </router-link>
+            </div>
+            <div class="h-6 w-px bg-gray-300"></div>
+            <div class="hidden md:flex items-center space-x-4">
+              <router-link v-for="item in secondNavigation" :key="item.name" :to="item.href"
+                class="flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors" :class="[
+                  $route.path === item.href
+                    ? 'bg-gray-100 text-gray-700'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                ]">
+                <component :is="item.icon" class="h-5 w-5 mr-2" />
+
                 {{ item.name }}
               </router-link>
             </div>
@@ -48,17 +57,12 @@
     <!-- Navigation mobile -->
     <div class="md:hidden bg-white border-b border-gray-200">
       <div class="px-2 pt-2 pb-3 space-y-1">
-        <router-link
-          v-for="item in navigation"
-          :key="item.name"
-          :to="item.href"
-          class="flex items-center px-3 py-2 rounded-md text-base font-medium transition-colors"
-          :class="[
+        <router-link v-for="item in navigation" :key="item.name" :to="item.href"
+          class="flex items-center px-3 py-2 rounded-md text-base font-medium transition-colors" :class="[
             $route.path === item.href
               ? 'bg-blue-100 text-blue-700'
               : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-          ]"
-        >
+          ]">
           <component :is="item.icon" class="h-5 w-5 mr-3" />
           {{ item.name }}
         </router-link>
@@ -94,7 +98,8 @@ import {
   CreditCardIcon,
   ChartBarIcon,
   UsersIcon,
-  ClockIcon
+  ClockIcon,
+  QuestionMarkCircleIcon
 } from '@heroicons/vue/24/outline'
 
 
@@ -102,6 +107,10 @@ const navigation = [
   { name: 'Tableau de bord', href: '/', icon: ChartBarIcon },
   { name: 'Étudiants', href: '/etudiants', icon: UsersIcon },
   { name: 'Historique', href: '/historique', icon: ClockIcon },
+]
+
+const secondNavigation = [
+    { name: 'Fonctionnement', href: '/fonctionnement', icon: QuestionMarkCircleIcon }
 ]
 
 function formatCurrentDate(): string {
@@ -115,9 +124,12 @@ function formatCurrentDate(): string {
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: .5;
   }

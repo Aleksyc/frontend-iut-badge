@@ -5,12 +5,20 @@
         <h3 class="text-lg font-semibold text-gray-900">Liste des étudiants</h3>
         <div class="text-sm text-gray-500">Total : {{ records.length }} étudiants</div>
       </div>
-      <button
-        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded shadow flex items-center gap-2 text-base"
-        @click="onAddStudent">
-        <span>Ajouter</span>
-        <PlusIcon class="w-5 h-5" />
-      </button>
+      <div class="flex gap-3">
+        <button
+          class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded shadow flex items-center gap-2 text-base"
+          @click="onAddStudent">
+          <span>Ajouter</span>
+          <PlusIcon class="w-5 h-5" />
+        </button>
+        <button
+          class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded shadow flex items-center gap-2 text-base"
+          @click="importCSV">
+          <span>Importer CSV</span>
+          <PlusIcon class="w-5 h-5" />
+        </button>
+      </div>
     </div>
     <div class="overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
@@ -65,24 +73,26 @@
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 flex gap-2">
               <PencilIcon class="w-5 h-5 text-blue-500 cursor-pointer hover:text-blue-700" @click="onEdit(record)" />
               <TrashIcon class="w-5 h-5 text-red-500 cursor-pointer hover:text-red-700" @click="onDelete(record)" />
+              <DocumentIcon class="w-5 h-5 text-gray-500 cursor-pointer hover:text-gray-700" />
             </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
-    <div class="text-center">
-      <v-pagination :length="totalPages" v-model="currentPage" size="small" @input="onPageChange"></v-pagination>
-    </div>
+  <div class="text-center">
+    <v-pagination :length="totalPages" v-model="currentPage" size="small" @input="onPageChange"></v-pagination>
+  </div>
 
-    <!-- Dialog de confirmation de suppression -->
-    <DeleteStudentDialog :showDeleteDialog="showDeleteDialog" :studentToDelete="studentToDelete" :cancelDelete="cancelDelete" :confirmDelete="confirmDelete"/>
+  <!-- Dialog de confirmation de suppression -->
+  <DeleteStudentDialog :showDeleteDialog="showDeleteDialog" :studentToDelete="studentToDelete"
+    :cancelDelete="cancelDelete" :confirmDelete="confirmDelete" />
 
 </template>
 
 <script setup lang="ts">
 
-import { PencilIcon, TrashIcon, PlusIcon } from '@heroicons/vue/24/outline'
+import { PencilIcon, TrashIcon, PlusIcon, DocumentIcon } from '@heroicons/vue/24/outline'
 import DeleteStudentDialog from './DeleteStudentDialog.vue'
 import api from '../services/api.service'
 import { ref, computed } from 'vue'
@@ -155,5 +165,38 @@ function cancelDelete() {
 function onAddStudent() {
   // Action à définir (ouvrir un dialogue, etc.)
   console.log('Ajouter un étudiant')
+}
+
+const fileInput = ref<HTMLInputElement | null>(null)
+
+function importCSV() {
+  if (!fileInput.value) {
+    fileInput.value = document.createElement('input')
+    fileInput.value.type = 'file'
+    fileInput.value.accept = '.csv'
+    fileInput.value.style.display = 'none'
+    fileInput.value.addEventListener('change', handleFileSelect)
+    document.body.appendChild(fileInput.value)
+  }
+  fileInput.value.click()
+}
+
+function handleFileSelect(event: Event) {
+  const input = event.target as HTMLInputElement
+  if (input.files && input.files.length > 0) {
+    const file = input.files[0]
+    // Lecture du fichier CSV et affichage de la première ligne
+    const reader = new FileReader()
+    reader.onload = function(e) {
+      const text = e.target?.result as string
+      if (text) {
+        const firstLine = text.split(/\r?\n/)[0]
+        console.log('Première ligne du CSV:', firstLine)
+      }
+    }
+    reader.readAsText(file)
+    console.log('Fichier CSV sélectionné:', file.name)
+  }
+  input.value = ''
 }
 </script>

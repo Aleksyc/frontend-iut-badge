@@ -1,7 +1,7 @@
 import axios from "axios"
 
 class ApiService {
-  private baseUrl: string = 'https://backend-iut-badge.onrender.com'
+  private baseUrl: string = 'http://127.0.0.1:8000'
 
   getEtudiantsDB(){
     return axios.get(`${this.baseUrl}/db/etudiants`)
@@ -13,6 +13,14 @@ class ApiService {
 
   getCountEtudiantsDB(){
     return axios.get(`${this.baseUrl}/db/count-etudiants`)
+  }
+
+  getCountEtudiantsActifsDB(){
+    return axios.get(`${this.baseUrl}/db/count-etudiants-actifs`)
+  }
+
+  postSearchEtudiantDB(dict: Record<string, string>){
+    return axios.post(`${this.baseUrl}/db/search-etudiants`, dict)
   }
 
   getEtudiantsPresencesDB(){

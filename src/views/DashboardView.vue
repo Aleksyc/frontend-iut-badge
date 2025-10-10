@@ -12,7 +12,7 @@
 
     <!-- Statistiques du jour -->
     <div v-if="!isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <DashboardCard title="Étudiants actifs aujourd'hui" :value=0
+      <DashboardCard title="Étudiants actifs aujourd'hui" :value=countEtudiantsActifs
         :subtitle="`sur ${countEtudiants} étudiants`" :icon="UsersIcon" icon-class="text-blue-600"
         icon-bg-class="bg-blue-100" />
 
@@ -43,19 +43,23 @@ import { ref, onMounted } from 'vue'
 import api from '../services/api.service'
 
 const isLoading = ref(true)
-const countEtudiants = ref(0); const countDay = ref(0); const countWeek = ref(0)
+const countEtudiants = ref(0); const countDay = ref(0); const countWeek = ref(0); const countEtudiantsActifs = ref(0)
 
 onMounted(() => {
   loadData()
 })
 
 async function loadData() {
-  const [countRes, countDayRes] = await Promise.all([
+  const [countRes, countDayRes, countWeekRes, countActifsRes] = await Promise.all([
     api.getCountEtudiantsDB(),
     api.getCountDayDB(),
+    api.getCountWeekDB(),
+    api.getCountEtudiantsActifsDB(),
   ])
   countEtudiants.value = (countRes.data as { [key: string]: any })["count-etudiants"]
   countDay.value = (countDayRes.data as { [key: string]: any })["count-day"]
+  countWeek.value = (countWeekRes.data as { [key: string]: any })["count-week"]
+  countEtudiantsActifs.value = (countActifsRes.data as { [key: string]: any })["count-etudiants-actifs"]
   isLoading.value = false
 }
 
