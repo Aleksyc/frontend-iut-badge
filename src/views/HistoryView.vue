@@ -106,6 +106,8 @@ const isLoading = ref(false)
 const isSearching = ref(false)
 const allStudentsPresence = ref<HistoryRecord[]>([])
 
+// =================== Statistiques ===================
+
 const totalRecords = computed(() => allStudentsPresence.value.length)
 const presenceCount = computed(() => allStudentsPresence.value.filter(record => record.statut_presence === 'Présent').length)
 const absenceCount = computed(() => Math.max(totalRecords.value - presenceCount.value, 0))

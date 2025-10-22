@@ -18,6 +18,12 @@ const router = createRouter({
       component: StudentsView
     },
     {
+      path: '/etudiants/:id',
+      name: 'student-detail',
+      component: () => import('../views/StudentDetailView.vue'),
+      props: true
+    },
+    {
       path: '/historique',
       name: 'history',
       component: HistoryView

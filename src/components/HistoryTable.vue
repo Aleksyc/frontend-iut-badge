@@ -85,14 +85,50 @@
             </table>
         </div>
     </div>
-    <div class="text-center">
-        <v-pagination :length="totalPages" v-model="currentPage" size="small" @input="onPageChange"></v-pagination>
+    <div class="px-6 py-4 border-t border-gray-200 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="text-sm text-gray-500">
+            <template v-if="records.length">
+                Affichage de {{ startItem }} à {{ endItem }} sur {{ records.length }} enregistrements
+            </template>
+            <template v-else>
+                Aucun enregistrement à afficher
+            </template>
+        </div>
+        <div v-if="records.length" class="flex items-center gap-2">
+            <button
+                class="px-3 py-1 text-sm rounded border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                @click="goToPreviousPage"
+                :disabled="currentPage === 1"
+            >
+                Précédent
+            </button>
+            <div class="flex items-center gap-1">
+                <button
+                    v-for="page in pageNumbers"
+                    :key="page"
+                    @click="goToPage(page)"
+                    :class="[
+                        'w-8 h-8 flex items-center justify-center rounded border text-sm transition-colors',
+                        page === currentPage ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-300 text-gray-600 hover:bg-gray-100'
+                    ]"
+                >
+                    {{ page }}
+                </button>
+            </div>
+            <button
+                class="px-3 py-1 text-sm rounded border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                @click="goToNextPage"
+                :disabled="currentPage === totalPages"
+            >
+                Suivant
+            </button>
+        </div>
     </div>
 
 </template>
 <script setup lang="ts">
 
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 export interface HistoryRecord {
     id_etu: number
@@ -117,15 +153,66 @@ const records = props.records
 const currentPage = ref(1)
 const pageSize = 10
 
-const totalPages = computed(() => Math.ceil(records.length / pageSize))
+const totalPages = computed(() => (records.length ? Math.ceil(records.length / pageSize) : 0))
+
+watch(totalPages, newTotal => {
+    if (newTotal === 0) {
+        currentPage.value = 1
+        return
+    }
+    if (currentPage.value > newTotal) {
+        currentPage.value = newTotal
+    }
+})
 
 const paginatedRecords = computed(() => {
-    const start = (currentPage.value - 1) * pageSize
+    if (!records.length) {
+        return []
+    }
+    const clampedPage = Math.min(currentPage.value, totalPages.value || 1)
+    const start = (clampedPage - 1) * pageSize
     return records.slice(start, start + pageSize)
 })
 
-function onPageChange(page: number) {
+const startItem = computed(() => {
+    if (!records.length) {
+        return 0
+    }
+    return (currentPage.value - 1) * pageSize + 1
+})
+
+const endItem = computed(() => {
+    if (!records.length) {
+        return 0
+    }
+    return Math.min(currentPage.value * pageSize, records.length)
+})
+
+const pageNumbers = computed(() => {
+    const total = totalPages.value
+    if (total === 0) {
+        return []
+    }
+    return Array.from({ length: total }, (_, index) => index + 1)
+})
+
+function goToPage(page: number) {
+    if (page < 1 || page > totalPages.value) {
+        return
+    }
     currentPage.value = page
+}
+
+function goToPreviousPage() {
+    if (currentPage.value > 1) {
+        currentPage.value -= 1
+    }
+}
+
+function goToNextPage() {
+    if (currentPage.value < totalPages.value) {
+        currentPage.value += 1
+    }
 }
 
 // =================== Format ===================

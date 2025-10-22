@@ -10,7 +10,7 @@
         <section class="bg-white rounded-lg shadow-sm border border-gray-200">
             <div class="px-6 py-4 border-b border-gray-200">
                 <h2 class="text-2xl font-semibold text-gray-900">FAQ</h2>
-                <p class="text-sm text-gray-500">Questions fréquentes sur l'utilisation de l'application</p>
+                <p class="text-sm text-gray-500">Questions sur l'utilisation et le fonctionnement de l'application</p>
             </div>
 
             <dl class="divide-y divide-gray-200">
@@ -53,25 +53,39 @@ interface FaqItem {
 
 const faqs = ref<FaqItem[]>([
     {
-        question: "Question 0 ?",
-        answer: "question 0 réponse",
+        question: "Comment ajouter un étudiant manuellement ?",
+        answer: "Depuis la page Etudiants, cliquez sur le bouton Ajouter puis remplissez le formulaire. L'identifiant est généré automatiquement par l'API et un message de confirmation apparaît en bas à droite une fois l'opération réussie.",
         points: [
-            "point 1",
-            "point 2",
-            "point 3"
+            "Ouvrir la page Etudiants",
+            "Cliquer sur Ajouter",
+            "Compléter les champs requis puis valider"
         ]
     },
     {
-        question: "Question 1 ?",
-        answer: "Question 1 réponse", 
+        question: "Comment importer plusieurs étudiants via CSV ?",
+        answer: "Utilisez le bouton Importer CSV. Le fichier doit contenir au minimum les colonnes prenom et nom. Une fois chargé, un aperçu des lignes valides est proposé avant l'envoi à l'API.",
+        points: [
+            "Cliquer sur Importer CSV et sélectionner le fichier",
+            "Vérifier l'aperçu et corriger les lignes rejetées si besoin",
+            "Valider l'import pour créer les étudiants"
+        ]
     },
     {
-        question: "Question 2 ?",
-        answer: "Question 2 réponse"
+        question: "Comment consulter la fiche détaillée d'un étudiant ?",
+        answer: "Dans le tableau des étudiants, l'identifiant situé sous le nom est cliquable. Il ouvre une page dédiée affichant les informations complètes de l'étudiant ainsi que son historique de présence.",
     },
     {
-        question: "Question 3 ?",
-        answer: "Question 3 réponse"
+        question: "Comment modifier ou supprimer un étudiant ?",
+        answer: "Les icônes crayon et corbeille à droite de chaque ligne permettent respectivement d'éditer ou de supprimer un étudiant. Chaque action déclenche un appel à l'API et affiche une notification de succès ou d'erreur.",
+        points: [
+            "Cliquer sur l'icône crayon pour modifier",
+            "Cliquer sur l'icône corbeille pour supprimer",
+            "Suivre la notification de confirmation"
+        ]
+    },
+    {
+        question: "Où consulter l'historique des présences ?",
+        answer: "La page Historique regroupe toutes les présences enregistrées. Elle propose une pagination ainsi que l'affichage détaillé des dates et statuts pour chaque étudiant.",
     }
 ])
 
