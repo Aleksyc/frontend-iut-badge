@@ -1,10 +1,7 @@
 <template>
   <div class="space-y-6">
     <div class="flex items-center justify-between">
-      <router-link
-        :to="{ name: 'students' }"
-        class="text-sm text-blue-600 hover:text-blue-800 hover:underline"
-      >
+      <router-link :to="{ name: 'students' }" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">
         ← Retour à la liste
       </router-link>
     </div>
@@ -21,14 +18,12 @@
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
-            <h2 class="text-2xl font-bold text-gray-900">{{ student.prenom_etu }} {{ student.nom_etu.toUpperCase() }}</h2>
+            <h2 class="text-2xl font-bold text-gray-900">{{ student.prenom_etu }} {{ student.nom_etu.toUpperCase() }}
+            </h2>
             <p class="text-sm text-gray-500">Identifiant : #{{ student.id_etu }}</p>
           </div>
-          <div class="text-sm text-gray-500">
-            <p>Dernière mise à jour : {{ lastUpdatedLabel }}</p>
-          </div>
         </div>
-        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+        <div class="mt-6 grid grid-cols-4 gap-4 text-sm">
           <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3">
             <p class="text-gray-500">Année</p>
             <p class="font-medium text-gray-900">{{ student.anne_etu || 'Non renseigné' }}</p>
@@ -49,8 +44,7 @@
       </div>
 
       <div class="space-y-3">
-        <h3 class="text-lg font-semibold text-gray-900">Historique des présences</h3>
-        <HistoryTable v-if="historyRecords.length" :records="historyRecords" />
+        <StudentHistoryList v-if="historyRecords.length" :records="historyRecords" />
         <div v-else class="bg-white rounded-lg border border-gray-200 p-6 text-sm text-gray-500">
           Aucun enregistrement de présence pour cet étudiant.
         </div>
@@ -60,10 +54,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import type { Student } from '../components/StudentsTable.vue'
-import HistoryTable from '../components/HistoryTable.vue'
-import type { HistoryRecord } from '../components/HistoryTable.vue'
+import StudentHistoryList, { StudentHistoryRecord } from '../components/StudentHistoryList.vue'
 import api from '../services/api.service'
 
 interface Props {
@@ -73,18 +66,9 @@ interface Props {
 const props = defineProps<Props>()
 
 const student = ref<Student | null>(null)
-const historyRecords = ref<HistoryRecord[]>([])
+const historyRecords = ref<StudentHistoryRecord[]>([])
 const isLoading = ref(true)
 const errorMessage = ref<string | null>(null)
-
-const lastUpdatedAt = ref<Date | null>(null)
-
-const lastUpdatedLabel = computed(() => {
-  if (!lastUpdatedAt.value) {
-    return '—'
-  }
-  return lastUpdatedAt.value.toLocaleString('fr-FR')
-})
 
 async function loadData(studentIdRaw: string) {
   const numericId = Number(studentIdRaw)
@@ -111,11 +95,11 @@ async function loadData(studentIdRaw: string) {
     }
 
     student.value = studentData
-    historyRecords.value = Array.isArray(historyRes?.data)
-      ? (historyRes.data as HistoryRecord[])
-      : []
 
-    lastUpdatedAt.value = new Date()
+    const rawHistory = historyRes?.data
+    historyRecords.value = Array.isArray(rawHistory)
+      ? (rawHistory as StudentHistoryRecord[])
+      : []
   } catch (error) {
     console.error('Erreur lors du chargement du détail étudiant', error)
     errorMessage.value = 'Impossible de charger les informations de cet étudiant.'
@@ -126,15 +110,17 @@ async function loadData(studentIdRaw: string) {
   }
 }
 
-watch(
-  () => props.id,
-  newId => {
-    loadData(newId)
-  },
-  { immediate: true }
-)
 
 onMounted(() => {
   loadData(props.id)
 })
+
+watch(
+  () => props.id,
+  newId => {
+    if (newId) {
+      loadData(newId)
+    }
+  }
+)
 </script>

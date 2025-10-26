@@ -6,12 +6,15 @@
     >
       <div
         :class="[
-          'px-4 py-3 rounded shadow-lg border flex items-start gap-3 text-sm',
-          typeClass
+          'px-4 py-3 rounded shadow-lg border flex items-start gap-3 text-sm bg-white text-gray-800',
+          containerClass
         ]"
+        role="status"
+        aria-live="polite"
       >
+        <component :is="iconComponent" class="w-5 h-5 mt-0.5" :class="iconClass" aria-hidden="true" />
         <div class="flex-1">
-          <p class="font-medium">{{ message }}</p>
+          <p class="font-medium text-gray-900">{{ message }}</p>
         </div>
         <button
           type="button"
@@ -27,6 +30,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { CheckCircleIcon, XCircleIcon } from '@heroicons/vue/24/outline'
 
 interface Props {
   message: string
@@ -36,11 +40,16 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const typeClass = computed(() => {
-  if (props.type === 'success') {
-    return 'bg-green-50 border-green-200 text-green-800'
-  }
-  return 'bg-red-50 border-red-200 text-red-800'
+const containerClass = computed(() => {
+  return props.type === 'success' ? 'border-green-200' : 'border-red-200'
+})
+
+const iconComponent = computed(() => {
+  return props.type === 'success' ? CheckCircleIcon : XCircleIcon
+})
+
+const iconClass = computed(() => {
+  return props.type === 'success' ? 'text-green-500' : 'text-red-500'
 })
 </script>
 

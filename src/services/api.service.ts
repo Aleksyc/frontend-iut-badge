@@ -16,7 +16,7 @@ class ApiService {
   }
 
   getEtudiantHistoryDB(id_etu: number){
-    return axios.get(`${this.baseUrl}/db/etudiants/${id_etu}/presences`)
+    return axios.get(`${this.baseUrl}/db/presences/${id_etu}`)
   }
 
   updateEtudiantDB(id_etu: number, payload: Record<string, unknown>){

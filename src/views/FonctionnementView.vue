@@ -2,8 +2,24 @@
     <div class="space-y-6">
         <!-- En-tête -->
         <div class="bg-gradient-to-r from-gray-600 to-gray-800 rounded-lg shadow-lg p-6 text-white">
-            <h1 class="text-3xl font-bold mb-2">Fonctionnement de l'application</h1>
-            <p class="text-blue-100">Description du fonctionnement de l'application</p>
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">Fonctionnement de l'application</h1>
+                    <p class="text-blue-100">Description du fonctionnement de l'application</p>
+                </div>
+                <a
+                    href="http://127.0.0.1:8000/docs"
+                    target="_blank"
+                    rel="noopener"
+                    class="inline-flex items-center gap-2 bg-white text-gray-900 font-medium py-2 px-4 rounded shadow hover:bg-gray-100 transition"
+                >
+                    Documentation de l'API
+                    <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path d="M5 4.5A1.5 1.5 0 016.5 3h4a.5.5 0 010 1h-4A.5.5 0 006 4.5v9a.5.5 0 00.5.5H15a.5.5 0 00.5-.5v-4a.5.5 0 011 0v4A1.5 1.5 0 0115 15.5H6.5A1.5 1.5 0 015 14V4.5z" />
+                        <path d="M9.5 5a.5.5 0 000 1h4.793l-7.147 7.146a.5.5 0 10.707.708L15 6.707V11.5a.5.5 0 001 0v-6a.5.5 0 00-.5-.5h-6z" />
+                    </svg>
+                </a>
+            </div>
         </div>
 
         <!-- FAQ -->
