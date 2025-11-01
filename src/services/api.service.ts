@@ -1,7 +1,7 @@
 import axios from "axios"
 
 class ApiService {
-  private baseUrl: string = 'http://backend-iut-badge.vercel.app'
+  private baseUrl: string = 'https://backend-iut-badge.vercel.app'
 
   createEtudiantDB(payload: Record<string, unknown>){
     return axios.post(`${this.baseUrl}/db/etudiants`, payload)
