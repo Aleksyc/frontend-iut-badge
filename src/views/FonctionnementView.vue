@@ -8,16 +8,13 @@
                     <p class="text-blue-100">Description du fonctionnement de l'application</p>
                 </div>
                 <a
-                    href="http://127.0.0.1:8000/docs"
+                    href="https://backend-iut-badge.vercel.app/docs"
                     target="_blank"
                     rel="noopener"
                     class="inline-flex items-center gap-2 bg-white text-gray-900 font-medium py-2 px-4 rounded shadow hover:bg-gray-100 transition"
                 >
                     Documentation de l'API
-                    <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path d="M5 4.5A1.5 1.5 0 016.5 3h4a.5.5 0 010 1h-4A.5.5 0 006 4.5v9a.5.5 0 00.5.5H15a.5.5 0 00.5-.5v-4a.5.5 0 011 0v4A1.5 1.5 0 0115 15.5H6.5A1.5 1.5 0 015 14V4.5z" />
-                        <path d="M9.5 5a.5.5 0 000 1h4.793l-7.147 7.146a.5.5 0 10.707.708L15 6.707V11.5a.5.5 0 001 0v-6a.5.5 0 00-.5-.5h-6z" />
-                    </svg>
+                    <ArrowTopRightOnSquareIcon class="w-5 h-5" />
                 </a>
             </div>
         </div>
@@ -60,6 +57,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { ArrowTopRightOnSquareIcon } from '@heroicons/vue/24/solid'
 
 interface FaqItem {
     question: string
@@ -105,7 +103,7 @@ const faqs = ref<FaqItem[]>([
     }
 ])
 
-const openFaqs = ref(new Set<number>([0]))
+const openFaqs = ref(new Set<number>([-1]))
 
 function toggleFaq(index: number) {
     const next = new Set(openFaqs.value)

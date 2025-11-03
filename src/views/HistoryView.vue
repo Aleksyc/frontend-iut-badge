@@ -7,19 +7,32 @@
     </div>
 
     <div v-if="isLoading" class="text-center py-12">
-      <v-progress-circular color="primary" size="50" width="5" indeterminate></v-progress-circular>
+      <svg aria-hidden="true" class="inline w-10 h-10 text-gray-200 animate-spin fill-blue-600" viewBox="0 0 100 101"
+        fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+          fill="currentColor" />
+        <path
+          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+          fill="currentFill" />
+      </svg>
     </div>
 
     <!-- Statistiques filtrées -->
     <div v-if="!isLoading" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <DashboardCard title="Total enregistrements" :value="isSearching ? totalRecords : '-'" :value-class="!isSearching ? 'text-gray-400' : ''" subtitle="Avec filtres appliqués" :icon="CreditCardIcon"
+      <DashboardCard title="Total enregistrements" :value="isSearching ? totalRecords : '-'"
+        :value-class="!isSearching ? 'text-gray-400' : ''" subtitle="Avec filtres appliqués" :icon="CreditCardIcon"
         icon-class="text-blue-600" icon-bg-class="bg-blue-100" />
 
-      <DashboardCard title="Présences" :value="isSearching ? presenceCount : '-'" :value-class="!isSearching ? 'text-gray-400' : ''" :subtitle="isSearching ? `${presencePercentage}% du total` : '-'" :icon="CheckIcon"
-        icon-class="text-green-600" icon-bg-class="bg-green-100" />
+      <DashboardCard title="Présences" :value="isSearching ? presenceCount : '-'"
+        :value-class="!isSearching ? 'text-gray-400' : ''"
+        :subtitle="isSearching ? `${presencePercentage}% du total` : '-'" :icon="CheckIcon" icon-class="text-green-600"
+        icon-bg-class="bg-green-100" />
 
-      <DashboardCard title="Absences" :value="isSearching ? absenceCount : '-'" :value-class="!isSearching ? 'text-gray-400' : ''" :subtitle="isSearching ? `${absencePercentage}% du total` : '-'" :icon="XMarkIcon"
-        icon-class="text-orange-600" icon-bg-class="bg-orange-100" />
+      <DashboardCard title="Absences" :value="isSearching ? absenceCount : '-'"
+        :value-class="!isSearching ? 'text-gray-400' : ''"
+        :subtitle="isSearching ? `${absencePercentage}% du total` : '-'" :icon="XMarkIcon" icon-class="text-orange-600"
+        icon-bg-class="bg-orange-100" />
     </div>
 
     <!-- Filtres et recherche -->
@@ -61,12 +74,9 @@
             class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
         </div>
         <div class="flex gap-2">
-          <button
-            @click="search"
-            :disabled="!dateStart || !dateEnd"
+          <button @click="search" :disabled="!dateStart || !dateEnd"
             class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-            :class="{ 'opacity-50 cursor-not-allowed': !dateStart || !dateEnd }"
-          >
+            :class="{ 'opacity-50 cursor-not-allowed': !dateStart || !dateEnd }">
             Rechercher
           </button>
 
@@ -126,7 +136,7 @@ const selectedTPs = ref(tps.value[0])
 const dateStart = ref("")
 const dateEnd = ref("")
 
-function getAllSearchParams(): Record<string, string|any> {
+function getAllSearchParams(): Record<string, string | any> {
   return {
     'anne_etu': selectedYears.value,
     'td_etu': selectedTDs.value,
@@ -152,7 +162,7 @@ async function search() {
 function downloadCSV() {
   const headers = ["Nom", "Prénom", "Année", "TD", "TP", "Statut", "Date et heure"]
   const rows = allStudentsPresence.value.map(student => [
-   student.nom_etu.toUpperCase(),
+    student.nom_etu.toUpperCase(),
     student.prenom_etu,
     student.anne_etu,
     student.td_etu,

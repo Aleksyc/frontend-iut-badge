@@ -84,7 +84,7 @@
       </table>
     </div>
   </div>
-  <div class="px-6 py-4 border-t border-gray-200 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <div class="px-6 py-4 border-gray-200 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div class="text-sm text-gray-500">
       <template v-if="records.length">
         Affichage de {{ startItem }} à {{ endItem }} sur {{ records.length }} étudiants
