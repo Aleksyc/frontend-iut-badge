@@ -6,9 +6,9 @@
         <div class="p-4 rounded border border-dashed border-gray-300 bg-gray-50 text-sm text-gray-600">
           <p class="font-medium text-gray-700 mb-2">Format attendu :</p>
           <p>
-            Le fichier CSV doit contenir les colonnes suivantes : prenom, nom, (optionnel) annee, td, tp, id_carte.
+            Le fichier CSV doit contenir les colonnes suivantes : prénom, nom, annee, td, tp, numéro de carte.
           </p>
-          <p class="mt-1">Les delimiters virgule ou point-virgule sont acceptes.</p>
+          <p class="mt-1">Les delimiteurs virgule ou point-virgule sont acceptés.</p>
         </div>
         <div>
           <input ref="fileInput" type="file" accept=".csv" class="hidden" @change="onFileSelected" />
@@ -21,21 +21,21 @@
             Choisir un fichier CSV
           </button>
           <div v-if="fileName" class="mt-2 text-sm text-gray-600">
-            Fichier selectionne : {{ fileName }}
+            Fichier sélectionné : {{ fileName }}
           </div>
         </div>
         <div v-if="totalValid > 0" class="space-y-3">
           <div class="text-sm text-gray-600">
-            {{ totalValid }} ligne(s) valide(s) prete(s) a etre importee(s).
-            <span v-if="totalInvalid"> {{ totalInvalid }} ligne(s) ignoree(s) apres validation.</span>
+            {{ totalValid }} ligne(s) valide(s) prête(s) à être importée(s).
+            <span v-if="totalInvalid"> {{ totalInvalid }} ligne(s) ignorée(s) après validation.</span>
           </div>
           <div class="border border-gray-200 rounded overflow-hidden">
             <table class="min-w-full divide-y divide-gray-200 text-sm">
               <thead class="bg-gray-50 text-gray-700">
                 <tr>
-                  <th class="px-4 py-2 text-left font-medium">Prenom</th>
+                  <th class="px-4 py-2 text-left font-medium">Prénom</th>
                   <th class="px-4 py-2 text-left font-medium">Nom</th>
-                  <th class="px-4 py-2 text-left font-medium">Annee</th>
+                  <th class="px-4 py-2 text-left font-medium">Année</th>
                   <th class="px-4 py-2 text-left font-medium">TD</th>
                   <th class="px-4 py-2 text-left font-medium">TP</th>
                   <th class="px-4 py-2 text-left font-medium">Carte</th>
@@ -54,11 +54,11 @@
             </table>
           </div>
           <div v-if="hasMorePreview" class="text-xs text-gray-500">
-            Apercu limite aux 5 premieres lignes du fichier.
+            Aperçu limité aux 5 premières lignes du fichier.
           </div>
         </div>
         <p v-else-if="fileName && !activeError" class="text-sm text-gray-500">
-          Aucune ligne valide detectee dans ce fichier.
+          Aucune ligne valide détectée dans ce fichier.
         </p>
         <p v-if="activeError" class="text-sm text-red-600">{{ activeError }}</p>
       </div>

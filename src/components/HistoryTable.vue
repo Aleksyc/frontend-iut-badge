@@ -40,7 +40,10 @@
                                         {{ record.prenom_etu + ' ' + (record.nom_etu).toUpperCase() }}
                                     </div>
                                     <div class="text-sm text-gray-500">
-                                        #{{ record.id_etu }}
+                                        <router-link :to="{ name: 'student-detail', params: { id: record.id_etu } }"
+                                            class="text-blue-600 hover:text-blue-800 hover:underline">
+                                            #{{ record.id_etu }}
+                                        </router-link>
                                     </div>
                                 </div>
                             </div>
@@ -61,20 +64,18 @@
                                         {{ record.datetime_pres ? formatDate(record.datetime_pres) : '' }}
                                     </div>
                                     <div class="text-sm text-gray-500">
-                                        {{ record.datetime_pres ? formatTime(record.datetime_pres)  : '' }}
+                                        {{ record.datetime_pres &&  record.statut_presence === 'Présent' ? formatTime(record.datetime_pres) : '' }}
                                     </div>
                                 </div>
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            <span
-                                v-if="record.statut_presence === 'Présent'"
+                            <span v-if="record.statut_presence === 'Présent'"
                                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
                                 style="font-size: 14px;">
                                 Présent
                             </span>
-                            <span
-                                v-else
+                            <span v-else
                                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"
                                 style="font-size: 14px;">
                                 Absent
@@ -97,29 +98,27 @@
         <div v-if="records.length" class="flex items-center gap-2">
             <button
                 class="px-3 py-1 text-sm rounded border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                @click="goToPreviousPage"
-                :disabled="currentPage === 1"
-            >
+                @click="goToPreviousPage" :disabled="currentPage === 1">
                 Précédent
             </button>
             <div class="flex items-center gap-1">
-                <button
-                    v-for="page in pageNumbers"
-                    :key="page"
-                    @click="goToPage(page)"
-                    :class="[
-                        'w-8 h-8 flex items-center justify-center rounded border text-sm transition-colors',
-                        page === currentPage ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-300 text-gray-600 hover:bg-gray-100'
-                    ]"
-                >
-                    {{ page }}
-                </button>
+                <template v-for="(item, idx) in pageItems" :key="typeof item === 'number' ? ('p-' + item) : ('e-' + idx)">
+                    <button
+                        v-if="typeof item === 'number'"
+                        @click="goToPage(item as number)"
+                        :class="[
+                            'w-8 h-8 flex items-center justify-center rounded border text-sm transition-colors',
+                            item === currentPage ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-300 text-gray-600 hover:bg-gray-100'
+                        ]"
+                    >
+                        {{ item }}
+                    </button>
+                    <span v-else class="w-8 h-8 flex items-center justify-center text-sm text-gray-500">&hellip;</span>
+                </template>
             </div>
             <button
                 class="px-3 py-1 text-sm rounded border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                @click="goToNextPage"
-                :disabled="currentPage === totalPages"
-            >
+                @click="goToNextPage" :disabled="currentPage === totalPages">
                 Suivant
             </button>
         </div>
@@ -137,8 +136,8 @@ export interface HistoryRecord {
     anne_etu: string
     td_etu: string
     tp_etu: string
-    datetime_pres: string|null
-    statut_presence: string
+    datetime_pres: string | null
+    statut_presence: string | null
 }
 
 interface Props {
@@ -188,12 +187,41 @@ const endItem = computed(() => {
     return Math.min(currentPage.value * pageSize, records.length)
 })
 
-const pageNumbers = computed(() => {
+const pageItems = computed(() => {
     const total = totalPages.value
     if (total === 0) {
-        return []
+        return [] as Array<number | string>
     }
-    return Array.from({ length: total }, (_, index) => index + 1)
+
+    // Nombre de pages adjacentes à afficher autour de la page courante
+    const neighbors = 2
+    const maxVisible = 1 + 2 * neighbors + 2 // first + last + neighbors both sides
+
+    if (total <= maxVisible) {
+        return Array.from({ length: total }, (_, index) => index + 1) as Array<number | string>
+    }
+
+    const items: Array<number | string> = []
+    const first = 1
+    const last = total
+    const left = Math.max(2, currentPage.value - neighbors)
+    const right = Math.min(total - 1, currentPage.value + neighbors)
+
+    items.push(first)
+    if (left > 2) {
+        items.push('...')
+    }
+
+    for (let p = left; p <= right; p++) {
+        items.push(p)
+    }
+
+    if (right < total - 1) {
+        items.push('...')
+    }
+
+    items.push(last)
+    return items
 })
 
 function goToPage(page: number) {
@@ -221,11 +249,11 @@ import { format, parseISO } from 'date-fns'
 import { fr } from 'date-fns/locale'
 
 function formatDate(timestamp: string): string {
-  return format(parseISO(timestamp), 'dd/MM/yyyy', { locale: fr })
+    return format(parseISO(timestamp), 'dd/MM/yyyy', { locale: fr })
 }
 
 function formatTime(timestamp: string): string {
-  return format(parseISO(timestamp), 'HH:mm', { locale: fr })
+    return format(parseISO(timestamp), 'HH:mm', { locale: fr })
 }
 
 </script>

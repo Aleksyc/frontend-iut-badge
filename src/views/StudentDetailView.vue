@@ -1,5 +1,6 @@
 <template>
   <div class="space-y-6">
+    <!-- En-tête -->
     <div class="flex items-center justify-between">
       <router-link :to="{ name: 'students' }" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">
         ← Retour à la liste
@@ -18,54 +19,58 @@
       </svg>
     </div>
 
-    <div v-else-if="errorMessage" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-      {{ errorMessage }}
-    </div>
-
     <div v-else-if="student" class="space-y-6">
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-          <div>
-            <h2 class="text-2xl font-bold text-gray-900">{{ student.prenom_etu }} {{ student.nom_etu.toUpperCase() }}
-            </h2>
-            <p class="text-sm text-gray-500">Identifiant : #{{ student.id_etu }}</p>
-          </div>
-        </div>
-        <div class="mt-6 grid grid-cols-4 gap-4 text-sm">
-          <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3">
-            <p class="text-gray-500">Année</p>
-            <p class="font-medium text-gray-900">{{ student.anne_etu || 'Non renseigné' }}</p>
-          </div>
-          <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3">
-            <p class="text-gray-500">TD</p>
-            <p class="font-medium text-gray-900">{{ student.td_etu || 'Non renseigné' }}</p>
-          </div>
-          <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3">
-            <p class="text-gray-500">TP</p>
-            <p class="font-medium text-gray-900">{{ student.tp_etu || 'Non renseigné' }}</p>
-          </div>
-          <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3">
-            <p class="text-gray-500">Numéro de carte</p>
-            <p class="font-medium text-gray-900">{{ student.id_carte_etu || 'Non renseigné' }}</p>
-          </div>
-        </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-6 flex flex-col gap-2">
+        <h2 class="text-3xl font-bold text-gray-900">
+          {{ student.prenom_etu }} {{ student.nom_etu.toUpperCase() }}
+        </h2>
+        <p class="text-sm text-gray-500">Identifiant : #{{ student.id_etu }}</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <DashboardCard
+          title="Absences cette semaine"
+          :value="absencesWeek"
+          subtitle="7 derniers jours"
+          :icon="CalendarDaysIcon"
+          icon-class="text-yellow-600"
+          icon-bg-class="bg-yellow-100"
+        />
+
+        <DashboardCard
+          title="Absences ce mois-ci"
+          :value="absencesMonth"
+          subtitle="30 derniers jours"
+          :icon="CalendarIcon"
+          icon-class="text-orange-600"
+          icon-bg-class="bg-orange-100"
+        />
+
+        <DashboardCard
+          title="Absences totales"
+          :value="absencesTotal"
+          subtitle="Année en cours"
+          :icon="ChartBarIcon"
+          icon-class="text-red-600"
+          icon-bg-class="bg-red-100"
+        />
       </div>
 
       <div class="space-y-3">
         <StudentHistoryList v-if="historyRecords.length" :records="historyRecords" />
-        <div v-else class="bg-white rounded-lg border border-gray-200 p-6 text-sm text-gray-500">
-          Aucun enregistrement de présence pour cet étudiant.
-        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import type { Student } from '../components/StudentsTable.vue'
-import StudentHistoryList, { StudentHistoryRecord } from '../components/StudentHistoryList.vue'
+import DashboardCard from '../components/DashboardCard.vue'
+import StudentHistoryList from '../components/StudentHistoryList.vue'
 import api from '../services/api.service'
+import { StudentHistoryRecord } from '../components/StudentHistoryList.vue'
+import { CalendarDaysIcon, ChartBarIcon} from '@heroicons/vue/24/outline'
+import { CalendarIcon } from '@heroicons/vue/24/solid'
 
 interface Props {
   id: string
@@ -77,6 +82,48 @@ const student = ref<Student | null>(null)
 const historyRecords = ref<StudentHistoryRecord[]>([])
 const isLoading = ref(true)
 const errorMessage = ref<string | null>(null)
+
+function isAbsent(record: StudentHistoryRecord) {
+  return record.statut_presence?.toLowerCase() === 'absent'
+}
+
+function parseRecordDate(value: string | null) {
+  if (!value) {
+    return null
+  }
+  const parsed = new Date(value)
+  return Number.isNaN(parsed.getTime()) ? null : parsed
+}
+
+// Computed absence metrics for summary cards.
+const absencesTotal = computed(() => {
+  return historyRecords.value.filter(isAbsent).length
+})
+
+function countAbsencesWithin(days: number) {
+  const now = Date.now()
+  const rangeMs = days * 24 * 60 * 60 * 1000
+  return historyRecords.value.reduce((count, record) => {
+    if (!isAbsent(record)) {
+      return count
+    }
+
+    const recordDate = parseRecordDate(record.datetime_pres)
+    if (!recordDate) {
+      return count
+    }
+
+    const diff = now - recordDate.getTime()
+    if (diff >= 0 && diff <= rangeMs) {
+      return count + 1
+    }
+
+    return count
+  }, 0)
+}
+
+const absencesWeek = computed(() => countAbsencesWithin(7))
+const absencesMonth = computed(() => countAbsencesWithin(30))
 
 async function loadData(studentIdRaw: string) {
   const numericId = Number(studentIdRaw)

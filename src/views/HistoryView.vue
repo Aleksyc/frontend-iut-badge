@@ -20,84 +20,25 @@
 
     <!-- Statistiques filtrées -->
     <div v-if="!isLoading" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <DashboardCard title="Total enregistrements" :value="isSearching ? totalRecords : '-'"
-        :value-class="!isSearching ? 'text-gray-400' : ''" subtitle="Avec filtres appliqués" :icon="CreditCardIcon"
+      <DashboardCard title="Total enregistrements" :value="totalRecords"
+        :subtitle="'Au total'" :icon="CreditCardIcon"
         icon-class="text-blue-600" icon-bg-class="bg-blue-100" />
 
-      <DashboardCard title="Présences" :value="isSearching ? presenceCount : '-'"
-        :value-class="!isSearching ? 'text-gray-400' : ''"
-        :subtitle="isSearching ? `${presencePercentage}% du total` : '-'" :icon="CheckIcon" icon-class="text-green-600"
+      <DashboardCard title="Présences" :value="presenceCount"
+        :subtitle="`${presencePercentage}% du total`" :icon="CheckIcon" icon-class="text-green-600"
         icon-bg-class="bg-green-100" />
 
-      <DashboardCard title="Absences" :value="isSearching ? absenceCount : '-'"
-        :value-class="!isSearching ? 'text-gray-400' : ''"
-        :subtitle="isSearching ? `${absencePercentage}% du total` : '-'" :icon="XMarkIcon" icon-class="text-orange-600"
+      <DashboardCard title="Absences" :value="absenceCount"
+        :subtitle="`${absencePercentage}% du total`" :icon="XMarkIcon" icon-class="text-orange-600"
         icon-bg-class="bg-orange-100" />
     </div>
 
-    <!-- Filtres et recherche -->
-    <div v-if="!isLoading" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      <div class="flex flex-col sm:flex-row gap-4 w-full justify-center items-center">
-
-        <!-- Combobox pour les filtres -->
-        <div class="flex items-center">
-          <label for="filter" class="mr-2 text-sm text-gray-700">Année :</label>
-          <select id="filter" v-model="selectedYears"
-            class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-            <option v-for="option in years" :key="option" :value="option">{{ option }}</option>
-          </select>
-        </div>
-        <div class="flex items-center">
-          <label for="filter" class="mr-2 text-sm text-gray-700">TD :</label>
-          <select id="filter" v-model="selectedTDs"
-            class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-            <option v-for="option in tds" :key="option" :value="option">{{ option }}</option>
-          </select>
-        </div>
-        <div class="flex items-center">
-          <label for="filter" class="mr-2 text-sm text-gray-700">TP :</label>
-          <select id="filter" v-model="selectedTPs"
-            class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-            <option v-for="option in tps" :key="option" :value="option">{{ option }}</option>
-          </select>
-        </div>
-
-        <!-- inputs de date -->
-        <div class="flex items-center">
-          <label for="dateStart" class="mr-2 text-sm text-gray-700">Du :</label>
-          <input id="dateStart" type="date" v-model="dateStart"
-            class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
-        </div>
-        <div class="flex items-center">
-          <label for="dateEnd" class="mr-2 text-sm text-gray-700">Au :</label>
-          <input id="dateEnd" type="date" v-model="dateEnd"
-            class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
-        </div>
-        <div class="flex gap-2">
-          <button @click="search" :disabled="!dateStart || !dateEnd"
-            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-            :class="{ 'opacity-50 cursor-not-allowed': !dateStart || !dateEnd }">
-            Rechercher
-          </button>
-
-          <!-- Séparateur vertical -->
-          <div class="hidden sm:block h-8 border-l border-gray-300 mx-2"></div>
-          <button @click="downloadCSV"
-            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-            <ArrowDownTrayIcon class="w-5 h-5 inline-block mr-1" />
-            Exporter CSV
-
-          </button>
-        </div>
-      </div>
-    </div>
-
     <!-- Tableau des présences -->
-    <div v-if="!isLoading && isSearching && allStudentsPresence.length !== 0">
+    <div v-if="!isLoading && allStudentsPresence.length !== 0">
       <HistoryTable :records="allStudentsPresence" />
     </div>
 
-    <div v-if="!isLoading && isSearching && allStudentsPresence.length === 0" class="text-center py-12">
+    <div v-if="!isLoading && allStudentsPresence.length === 0" class="text-center py-12">
       <p class="text-gray-500">Aucun enregistrement trouvé pour les critères de recherche sélectionnés.</p>
     </div>
   </div>
@@ -108,13 +49,24 @@
 import HistoryTable from '../components/HistoryTable.vue';
 import { HistoryRecord } from '../components/HistoryTable.vue'
 import DashboardCard from '../components/DashboardCard.vue'
-import { ref, computed } from 'vue'
-import { ArrowDownTrayIcon, CreditCardIcon, CheckIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { ref, computed, onMounted } from 'vue'
+import { CreditCardIcon, CheckIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import api from '../services/api.service'
 
-const isLoading = ref(false)
-const isSearching = ref(false)
+const isLoading = ref(true)
 const allStudentsPresence = ref<HistoryRecord[]>([])
+
+onMounted(() => {
+  loadData()
+})
+
+async function loadData() {
+  const [studentsRes] = await Promise.all([
+    api.getEtudiantsPresencesDB(),
+  ])
+  allStudentsPresence.value = studentsRes.data as HistoryRecord[]
+  isLoading.value = false
+}
 
 // =================== Statistiques ===================
 
@@ -123,67 +75,5 @@ const presenceCount = computed(() => allStudentsPresence.value.filter(record => 
 const absenceCount = computed(() => Math.max(totalRecords.value - presenceCount.value, 0))
 const presencePercentage = computed(() => totalRecords.value === 0 ? 0 : Math.round((presenceCount.value / totalRecords.value) * 100))
 const absencePercentage = computed(() => totalRecords.value === 0 ? 0 : Math.round((absenceCount.value / totalRecords.value) * 100))
-
-// =================== Filtres de recherche ===================
-
-const years = ref(["", "BUT1", "BUT2", "BUT3"])
-const tds = ref(["", "TD1", "TD2", "TD3"])
-const tps = ref(["", "TP1", "TP2", "TP3", "TP4"])
-
-const selectedYears = ref(years.value[0])
-const selectedTDs = ref(tds.value[0])
-const selectedTPs = ref(tps.value[0])
-const dateStart = ref("")
-const dateEnd = ref("")
-
-function getAllSearchParams(): Record<string, string | any> {
-  return {
-    'anne_etu': selectedYears.value,
-    'td_etu': selectedTDs.value,
-    'tp_etu': selectedTPs.value,
-    'datetime_pres_start': dateStart.value,
-    'datetime_pres_end': dateEnd.value
-  }
-}
-
-async function search() {
-  isLoading.value = true
-  const params = getAllSearchParams()
-  console.log("Params de recherche :", params)
-  const response = await api.postSearchEtudiantDB(params)
-  allStudentsPresence.value = response.data as HistoryRecord[]
-  isLoading.value = false
-  isSearching.value = true
-}
-
-
-// =================== Téléchargement CSV ===================
-
-function downloadCSV() {
-  const headers = ["Nom", "Prénom", "Année", "TD", "TP", "Statut", "Date et heure"]
-  const rows = allStudentsPresence.value.map(student => [
-    student.nom_etu.toUpperCase(),
-    student.prenom_etu,
-    student.anne_etu,
-    student.td_etu,
-    student.tp_etu,
-    student.statut_presence,
-    student.datetime_pres ? new Date(student.datetime_pres).toLocaleString() : ''
-  ])
-
-  let csvContent = "data:text/csv;charset=utf-8,"
-  csvContent += headers.join(",") + "\n"
-  rows.forEach(row => {
-    csvContent += row.join(",") + "\n"
-  })
-
-  const encodedUri = encodeURI(csvContent)
-  const link = document.createElement("a")
-  link.setAttribute("href", encodedUri)
-  link.setAttribute("download", "historique_badges.csv")
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-}
 
 </script>
