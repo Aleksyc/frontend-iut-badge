@@ -2,22 +2,22 @@
   <div class="bg-white rounded-lg shadow-sm border border-gray-200">
     <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
       <div>
-        <h3 class="text-lg font-semibold text-gray-900">Liste des étudiants</h3>
-        <div class="text-sm text-gray-500">Total : {{ records.length }} étudiants</div>
+      <h3 class="text-lg font-semibold text-gray-900">Liste des étudiants</h3>
+      <div class="text-sm text-gray-500">Total : {{ records.length }} étudiants</div>
       </div>
-      <div class="flex gap-3">
-        <button
-          class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded shadow flex items-center gap-2 text-base"
-          @click="onAddStudent">
-          <span>Ajouter</span>
-          <PlusIcon class="w-5 h-5" />
-        </button>
-        <button
-          class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded shadow flex items-center gap-2 text-base"
-          @click="importCSV">
-          <span>Importer CSV</span>
-          <PlusIcon class="w-5 h-5" />
-        </button>
+      <div class="flex flex-col gap-2 sm:flex-row sm:gap-3">
+      <button
+        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-3 rounded shadow flex items-center justify-center gap-2 text-sm w-full sm:w-auto sm:py-2 sm:px-4 sm:text-base"
+        @click="onAddStudent">
+        <span>Ajouter</span>
+        <PlusIcon class="w-5 h-5" />
+      </button>
+      <button
+        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-3 rounded shadow flex items-center justify-center gap-2 text-sm w-full sm:w-auto sm:py-2 sm:px-4 sm:text-base"
+        @click="importCSV">
+        <span>Importer CSV</span>
+        <PlusIcon class="w-5 h-5" />
+      </button>
       </div>
     </div>
     <div class="overflow-x-auto">
@@ -84,8 +84,8 @@
       </table>
     </div>
   </div>
-  <div class="px-6 py-4 border-gray-200 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-    <div class="text-sm text-gray-500">
+  <div class="px-6 py-4 border-gray-200 flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="text-sm text-gray-500 text-center sm:text-left">
       <template v-if="records.length">
         Affichage de {{ startItem }} à {{ endItem }} sur {{ records.length }} étudiants
       </template>
@@ -93,7 +93,7 @@
         Aucun étudiant à afficher
       </template>
     </div>
-    <div v-if="records.length" class="flex items-center gap-2">
+  <div v-if="records.length" class="flex items-center justify-center gap-2 w-full sm:w-auto">
       <button
         class="px-3 py-1 text-sm rounded border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
         @click="goToPreviousPage"

@@ -11,7 +11,7 @@
                     href="https://backend-iut-badge.vercel.app/docs"
                     target="_blank"
                     rel="noopener"
-                    class="inline-flex items-center gap-2 bg-white text-gray-900 font-medium py-2 px-4 rounded shadow hover:bg-gray-100 transition"
+                    class="inline-flex items-center gap-2 bg-white text-gray-900 font-medium py-2 px-4 rounded shadow hover:bg-gray-100 transition max-w-max"
                 >
                     Documentation de l'API
                     <ArrowTopRightOnSquareIcon class="w-5 h-5" />

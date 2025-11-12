@@ -1,7 +1,7 @@
 <template>
   <div v-if="isDialogVisible" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-40">
     <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl">
-      <h4 class="text-lg font-semibold mb-4">Importer des etudiants</h4>
+      <h4 class="text-lg font-semibold mb-4">Importer des étudiants</h4>
       <div class="space-y-5">
         <div class="p-4 rounded border border-dashed border-gray-300 bg-gray-50 text-sm text-gray-600">
           <p class="font-medium text-gray-700 mb-2">Format attendu :</p>

@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex flex-col bg-gray-50">
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm border-b border-gray-200">
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
           <div class="flex items-center space-x-8">
@@ -24,7 +24,7 @@
                 {{ item.name }}
               </router-link>
             </div>
-            <div class="h-6 w-px bg-gray-300"></div>
+            <div v-if="isMobileScreen" class="h-6 w-px bg-gray-300"></div>
             <div class="hidden md:flex items-center space-x-4">
               <router-link v-for="item in secondNavigation" :key="item.name" :to="item.href"
                 class="flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors" :class="[
@@ -44,11 +44,6 @@
             <span class="text-sm text-gray-500">
               {{ formatCurrentDate() }}
             </span>
-            <div class="h-6 w-px bg-gray-300"></div>
-            <div class="flex items-center space-x-2">
-              <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span class="text-sm text-gray-600">Système actif</span>
-            </div>
           </div>
         </div>
       </div>
@@ -61,6 +56,15 @@
           class="flex items-center px-3 py-2 rounded-md text-base font-medium transition-colors" :class="[
             $route.path === item.href
               ? 'bg-blue-100 text-blue-700'
+              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+          ]">
+          <component :is="item.icon" class="h-5 w-5 mr-3" />
+          {{ item.name }}
+        </router-link>
+        <router-link v-for="item in secondNavigation" :key="item.name" :to="item.href"
+          class="flex items-center px-3 py-2 rounded-md text-base font-medium transition-colors" :class="[
+            $route.path === item.href
+              ? 'bg-gray-100 text-gray-700'
               : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
           ]">
           <component :is="item.icon" class="h-5 w-5 mr-3" />
@@ -101,7 +105,7 @@ import {
   ClockIcon,
   QuestionMarkCircleIcon
 } from '@heroicons/vue/24/outline'
-
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const navigation = [
   { name: 'Tableau de bord', href: '/', icon: ChartBarIcon },
@@ -110,12 +114,23 @@ const navigation = [
 ]
 
 const secondNavigation = [
-    { name: 'Fonctionnement', href: '/fonctionnement', icon: QuestionMarkCircleIcon }
+  { name: 'Fonctionnement', href: '/fonctionnement', icon: QuestionMarkCircleIcon }
 ]
 
 function formatCurrentDate(): string {
   return format(new Date(), 'EEEE d MMMM yyyy', { locale: fr })
 }
+
+const isMobileScreen = ref(window.innerWidth >= 768)
+function handleResize() {
+  isMobileScreen.value = window.innerWidth >= 768
+}
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
 </script>
 
 <style scoped>

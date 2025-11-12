@@ -95,7 +95,6 @@ function parseRecordDate(value: string | null) {
   return Number.isNaN(parsed.getTime()) ? null : parsed
 }
 
-// Computed absence metrics for summary cards.
 const absencesTotal = computed(() => {
   return historyRecords.value.filter(isAbsent).length
 })
@@ -164,7 +163,6 @@ async function loadData(studentIdRaw: string) {
     isLoading.value = false
   }
 }
-
 
 onMounted(() => {
   loadData(props.id)

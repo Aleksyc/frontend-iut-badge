@@ -86,8 +86,8 @@
             </table>
         </div>
     </div>
-    <div class="px-6 py-4 border-t border-gray-200 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div class="text-sm text-gray-500">
+    <div class="px-6 py-4 border-t border-gray-200 flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="text-sm text-gray-500 text-center sm:text-left">
             <template v-if="records.length">
                 Affichage de {{ startItem }} à {{ endItem }} sur {{ records.length }} enregistrements
             </template>
@@ -95,7 +95,7 @@
                 Aucun enregistrement à afficher
             </template>
         </div>
-        <div v-if="records.length" class="flex items-center gap-2">
+    <div v-if="records.length" class="flex items-center justify-center gap-2 w-full sm:w-auto">
             <button
                 class="px-3 py-1 text-sm rounded border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                 @click="goToPreviousPage" :disabled="currentPage === 1">

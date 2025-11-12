@@ -20,12 +20,12 @@
           </p>
         </div>
         <span v-if="record.statut_presence === 'Présent'"
-          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 max-w-max"
           style="font-size: 14px;">
           Présent
         </span>
         <span v-else
-          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"
+          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 max-w-max"
           style="font-size: 14px;">
           Absent
         </span>
